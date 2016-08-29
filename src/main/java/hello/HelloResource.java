@@ -23,26 +23,30 @@ import org.keycloak.services.managers.RealmManager;
  */
 public class HelloResource {
 
-    private final KeycloakSession session;
-    private final AppAuthManager authManager;
+    @Context
+    private KeycloakSession session;
 
-    HelloResource(KeycloakSession session) {
-        this.session = session;
+    @Context
+    private HttpHeaders headers;
+    
+    private final AppAuthManager authManager;
+    private HelloAdminAuth auth;
+
+    public HelloResource() {
         this.authManager = new AppAuthManager();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public HelloResponse hello(@Context HttpHeaders headers) {
+    public HelloResponse hello() {
 
-        HelloAdminAuth auth = setupAuth(headers);
         auth.checkViewHello();
 
         return new HelloResponse("Hello " + auth.getUser().getUsername() + "@" + auth.getRealm().getName() + " [" + auth.getClient().getClientId() + "]");
 
     }
 
-    private HelloAdminAuth setupAuth(HttpHeaders headers) {
+    void setupAuth() {
 
         String tokenString = authManager.extractAuthorizationHeaderToken(headers);
 
@@ -79,7 +83,7 @@ public class HelloResource {
 
         UserModel user = authResult.getUser();
 
-        return new HelloAdminAuth(realm, token, user, client);
+        auth = new HelloAdminAuth(realm, token, user, client);
 
     }
 

@@ -1,7 +1,6 @@
 package hello;
 
 import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.core.Response;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;

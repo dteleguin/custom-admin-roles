@@ -1,5 +1,6 @@
 package hello;
 
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.services.resource.RealmResourceProvider;
 
@@ -8,10 +9,7 @@ import org.keycloak.services.resource.RealmResourceProvider;
  */
 public class HelloResourceProvider implements RealmResourceProvider {
 
-    private final KeycloakSession session;
-
-    HelloResourceProvider(KeycloakSession session) {
-        this.session = session;
+    public HelloResourceProvider(KeycloakSession session) {
     }
 
     @Override
@@ -20,7 +18,12 @@ public class HelloResourceProvider implements RealmResourceProvider {
 
     @Override
     public Object getResource() {
-        return new HelloResource(session);
+
+        HelloResource hello = new HelloResource();
+        ResteasyProviderFactory.getInstance().injectProperties(hello);
+        hello.setupAuth();
+        return hello;
+
     }
 
 }
